@@ -170,6 +170,7 @@ tbody tr {
   background-color: #444;
   cursor: pointer;
 }
+
 tbody tr td {
   padding: 10px;
   width: 100%;
