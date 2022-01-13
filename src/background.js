@@ -6,7 +6,7 @@ import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path';
 const isDevelopment = process.env.NODE_ENV !== 'production'
 import { createStore } from 'vuex';
-import { FindGames, LaunchGame } from './FindGames';
+import { FindGames, TestLaunchGame } from './FindGames';
 
 const store = createStore({
   state() {
@@ -109,7 +109,8 @@ async function createWindow() {
       enableRemoteModule: true
     }
   });
-  if (settings['fullscreen']) {
+  console.log("FULLSCREEN: " + settings['fullscreen']);
+  if (settings['fullscreen'] == true) {
     win.maximize();
   }
 
@@ -119,9 +120,11 @@ async function createWindow() {
 
   win.on('resize', function () {
     if (win.isMaximized()) {
+      console.log("FULLSCREEN");
       settings['fullscreen'] = true;
     }
     else {
+      console.log("RESTORE");
       let size = win.getSize();
       settings['windowSize']['width'] = size[0];
       settings['windowSize']['height'] = size[1];
@@ -141,6 +144,7 @@ async function createWindow() {
 
   ipcMain.on('quit-app', () => {
     fs.writeFileSync(app.getPath("userData") + "/settings.json", JSON.stringify(settings));
+    console.log(JSON.stringify(settings));
     app.quit();
   });
 
@@ -148,14 +152,13 @@ async function createWindow() {
     win.minimize()
   });
 
-  ipcMain.on('maximize', (event) => {
+  ipcMain.on('maximize', () => {
     if (win.isMaximized()) {
       win.restore();
     }
     else {
       win.maximize();
     }
-    event.reply('reply', 'pong');
   });
 
   ipcMain.on('vuex-set-page', (event, args) => {
@@ -195,7 +198,7 @@ async function createWindow() {
 
   ipcMain.on('launch-game', (event, arg) => {
     try {
-      LaunchGame(arg);
+      TestLaunchGame(arg);
     }
     catch(error) {
       console.error("Error: " + error);
