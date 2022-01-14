@@ -11,12 +11,22 @@
       <table>
         <thead>
           <tr>
-            <th>Installed Games</th>
+            <th>
+              <div>Installed Games</div>
+              <input
+                type="text"
+                name="searchBar"
+                id="searchBar"
+                placeholder="Search"
+                v-model="searchBarValue"
+              />
+            </th>
           </tr>
         </thead>
         <tbody id="tableBody">
           <div v-for="game in installedGames" v-bind:key="game[1]">
             <tr
+              v-if="game[0].toLowerCase().includes(searchBarValue.toLowerCase()) || searchBarValue == ''"
               v-on:dblclick="LaunchGame($event)"
               v-on:click="OpenAccordion($event)"
             >
@@ -48,6 +58,7 @@ export default {
     return {
       gameList: [],
       fileSearch: false,
+      searchBar: "",
     };
   },
   computed: {
@@ -65,6 +76,14 @@ export default {
       },
       set(value) {
         this.fileSearch = value;
+      },
+    },
+    searchBarValue: {
+      get() {
+        return this.searchBar;
+      },
+      set(value) {
+        this.searchBar = value;
       },
     },
   },
@@ -202,6 +221,7 @@ input[type="text"] {
   color: #eee;
   font-size: 20px;
   text-align: center;
+  outline: none;
 }
 .accordionOption {
   display: flex;
