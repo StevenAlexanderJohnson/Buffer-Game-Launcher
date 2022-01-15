@@ -60,7 +60,7 @@
             <div class="accordion">
               <div class="accordionOption">
                 <label for="launchOptions">Launch Options: </label>
-                <input type="text" name="launchOptions" id="launchOptions" />
+                <input type="text" name="launchOptions" id="launchOptions" placeholder="temp disabled" disabled />
               </div>
             </div>
           </div>
