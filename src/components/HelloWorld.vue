@@ -13,27 +13,49 @@
           <tr>
             <th>
               <div>Installed Games</div>
-              <input
-                type="text"
-                name="searchBar"
-                id="searchBar"
-                placeholder="Search"
-                v-model="searchBarValue"
-              />
+              <div class="container">
+                <input
+                  type="text"
+                  name="searchBar"
+                  id="searchBar"
+                  placeholder="Search"
+                  v-model="searchBarValue"
+                />
+                <input type="button" value="Random Game" v-on:click="LaunchRandomGame()">
+                <div>
+                  <label for="SortOptions">Sort Filters:</label>
+                  <select
+                    name="SortOptions"
+                    id="SortOptions"
+                    v-model="sortOptionValue"
+                  >
+                    <option value="name asc">Name Asc.</option>
+                    <option value="name dsc">Name Dsc.</option>
+                  </select>
+                </div>
+              </div>
             </th>
           </tr>
         </thead>
         <tbody id="tableBody">
           <div v-for="game in installedGames" v-bind:key="game[1]">
             <tr
-              v-if="game[0].toLowerCase().includes(searchBarValue.toLowerCase()) || searchBarValue == ''"
+              v-if="
+                game[0].toLowerCase().includes(searchBarValue.toLowerCase()) ||
+                searchBarValue == ''
+              "
               v-on:dblclick="LaunchGame($event)"
-              v-on:click="OpenAccordion($event)"
             >
-              <div hidden>{{ game[1] }}</div>
               <td>
                 {{ game[0].replace(".exe", "") }}
+                <img
+                  class="arrowIcon"
+                  src="../assets/arrow_icon.png"
+                  alt="arrow"
+                  v-on:click="OpenAccordion($event)"
+                />
               </td>
+              <div hidden>{{ game[1] }}</div>
             </tr>
             <div class="accordion">
               <div class="accordionOption">
@@ -59,6 +81,7 @@ export default {
       gameList: [],
       fileSearch: false,
       searchBar: "",
+      sortOption: "",
     };
   },
   computed: {
@@ -86,6 +109,27 @@ export default {
         this.searchBar = value;
       },
     },
+    sortOptionValue: {
+      get() {
+        return this.sortOption;
+      },
+      set(value) {
+        this.sortOption = value;
+        if (value === "name asc") {
+          console.log(
+            this.installedGames.sort((a, b) =>
+              a[0] > b[0] ? 1 : b[0] > a[0] ? -1 : 0
+            )
+          );
+        } else if (value === "name dsc") {
+          console.log(
+            this.installedGames.sort((a, b) =>
+              a[0] < b[0] ? 1 : b[0] < a[0] ? -1 : 0
+            )
+          );
+        }
+      },
+    },
   },
   mounted: function () {
     let getData = setInterval(function () {
@@ -104,13 +148,21 @@ export default {
     LaunchGame: function (event) {
       window.ipcRenderer.send(
         "launch-game",
-        event.currentTarget.children[0].innerText
+        event.currentTarget.children[1].innerText
       );
     },
+    LaunchRandomGame: function() {
+      let tds = document.getElementsByTagName('tr');
+      console.log(tds);
+      let randomGame = tds[Math.floor(Math.random() * tds.length-1) + 1]
+      console.log(randomGame);
+      randomGame.dispatchEvent(new MouseEvent('dblclick'));
+    },
     OpenAccordion: function (event) {
+      let parent = event.currentTarget.closest("tr");
       // If the accordion is already open close it, else close all other accordions and open the selected
-      if (event.currentTarget.nextSibling.classList.contains("opened")) {
-        event.currentTarget.nextSibling.classList.remove("opened");
+      if (parent.nextSibling.classList.contains("opened")) {
+        parent.nextSibling.classList.remove("opened");
       } else {
         let openedAccordions = document.getElementsByClassName("opened");
         for (let i = 0; i < openedAccordions.length; i++) {
@@ -119,8 +171,21 @@ export default {
             break;
           }
         }
-        event.currentTarget.nextSibling.classList.add("opened");
+        parent.nextSibling.classList.add("opened");
       }
+      console.log(event.currentTarget.classList);
+      if (event.currentTarget.classList.contains("flipped")) {
+        event.currentTarget.classList.remove("flipped");
+        return;
+      }
+      let flippedArrows = document.getElementsByClassName("arrowIcon");
+      for (let i = 0; i < flippedArrows.length; i++) {
+        if (flippedArrows[i].classList.contains("flipped")) {
+          flippedArrows[i].classList.remove("flipped");
+          break;
+        }
+      }
+      event.currentTarget.classList.add("flipped");
     },
   },
 };
@@ -177,6 +242,7 @@ tbody::-webkit-scrollbar-thumb {
 }
 tbody {
   display: block;
+  min-width: 100%;
   height: calc(100vh - 200px);
   background-color: #555;
   overflow-y: auto;
@@ -190,6 +256,7 @@ tbody tr {
   cursor: pointer;
 }
 tbody tr td {
+  position: relative;
   padding: 10px;
   width: 100%;
   text-align: center;
@@ -214,17 +281,23 @@ tbody tr td:hover {
 .opened {
   max-height: 200px;
 }
-
-input[type="text"] {
-  height: 30px;
-  background-color: #424242;
-  color: #eee;
-  font-size: 20px;
-  text-align: center;
-  outline: none;
-}
 .accordionOption {
   display: flex;
+  align-items: center;
+}
+.arrowIcon {
+  position: absolute;
+  right: 20px;
+  height: 20px;
+  width: auto;
+  transition: 0.2s ease-in-out;
+}
+.flipped {
+  transform: rotate(180deg);
+}
+.container {
+  display: flex;
+  justify-content: space-around;
   align-items: center;
 }
 </style>

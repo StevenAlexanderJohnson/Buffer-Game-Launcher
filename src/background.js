@@ -132,6 +132,10 @@ async function createWindow() {
     }
   });
 
+  win.on('close', function () {
+    fs.writeFileSync(app.getPath("userData") + "/settings.json", JSON.stringify(settings));
+  });
+
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
@@ -143,8 +147,6 @@ async function createWindow() {
   }
 
   ipcMain.on('quit-app', () => {
-    fs.writeFileSync(app.getPath("userData") + "/settings.json", JSON.stringify(settings));
-    console.log(JSON.stringify(settings));
     app.quit();
   });
 
@@ -200,7 +202,7 @@ async function createWindow() {
     try {
       TestLaunchGame(arg);
     }
-    catch(error) {
+    catch (error) {
       console.error("Error: " + error);
     }
   });

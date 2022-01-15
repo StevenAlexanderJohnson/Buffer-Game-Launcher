@@ -69,4 +69,23 @@ body {
 	flex-direction: row;
   height: calc(100vh - 30px);
 }
+input[type="button"] {
+  border-radius: 0px;
+  background-color: #555;
+  color: #eee;
+  height: 25px;
+  border: none;
+}
+input[type="button"]:hover {
+  background-color: #333;
+}
+input[type="text"] {
+  height: 30px;
+  background-color: #424242;
+  color: #eee;
+  border: 2px solid black;
+  font-size: 20px;
+  text-align: center;
+  outline: none;
+}
 </style>
