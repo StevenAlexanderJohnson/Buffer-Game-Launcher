@@ -95,7 +95,6 @@ async function createWindow() {
     minWidth: 800,
     minHeight: 600,
     frame: false,
-    titleBarStyle: 'hidden',
     backgroundColor: "#444",
     show: false,
     webPreferences: {
@@ -110,21 +109,19 @@ async function createWindow() {
     }
   });
   console.log("FULLSCREEN: " + settings['fullscreen']);
-  if (settings['fullscreen'] == true) {
-    win.maximize();
-  }
 
   win.on('ready-to-show', function () {
     win.show();
+    if (settings['fullscreen'] == true) {
+      win.maximize();
+    }
   });
 
   win.on('resize', function () {
     if (win.isMaximized()) {
-      console.log("FULLSCREEN");
       settings['fullscreen'] = true;
     }
     else {
-      console.log("RESTORE");
       let size = win.getSize();
       settings['windowSize']['width'] = size[0];
       settings['windowSize']['height'] = size[1];

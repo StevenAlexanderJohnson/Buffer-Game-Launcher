@@ -24,6 +24,7 @@ export default {
 
 <style scoped>
 .sidebar {
+  user-select: none;
   background-color: #444;
   width: 100px;
 }

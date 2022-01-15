@@ -3,7 +3,7 @@
   <Tilebar />
     <div class="flexContainer">
       <Sidebar />
-      <HelloWorld v-if="page == 'home'" msg="Welcome to Your Vue.js App" />
+      <HelloWorld v-if="page == 'home'" msg="Welcome to Buffer" />
       <Options v-else-if="page == 'options'" />
     </div>
   </div>
