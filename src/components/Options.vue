@@ -24,7 +24,7 @@
         </table>
       </div>
       <div class="flexContent">
-        <input type="text" name="pathInput" id="pathInput" />
+        <input type="text" name="pathInput" id="pathInput" placeholder="C:\Program Files (x86)\Steam\steamapps\common" />
         <br />
         <input type="button" value="Add Path" v-on:click="AddPath()" />
       </div>
@@ -128,5 +128,8 @@ tr {
   margin-left: 50px;
   margin: 30px;
   min-height: 50px;
+}
+#pathInput {
+  width: 30vw;
 }
 </style>

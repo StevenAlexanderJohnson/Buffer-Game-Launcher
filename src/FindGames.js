@@ -140,11 +140,14 @@ export function TestLaunchGame(gamePath) {
                         let steamPath = gamePathSplit.join('/');
                         // Execute the app through the steam launcher, setting current working directory to the steam path, and let the 
                         // environment be the same ass the process
-                        cp.exec('steam.exe -applaunch ' + apps[i].appid, { cwd: steamPath, env: process.env }, function (stdout, stderr) {
+                        let game = cp.exec('steam.exe -applaunch ' + apps[i].appid, { cwd: steamPath, env: process.env }, function (stdout, stderr) {
                             if (stderr) {
                                 console.log("WRAPPERSTDERR: " + stderr)
                             }
                             console.log("WRAPPERSTDOUT: " + stdout);
+                        });
+                        game.on('close', function() {
+                            console.log("closed");
                         });
                         return;
                     }
