@@ -1,5 +1,15 @@
 <template>
   <div class="hello">
+    <div id="confirmation">
+      <p>Do you want to launch: </p>
+      <p id="confirm-game-name"></p>
+      <div id="confirm-game-path" hidden></div>
+      <div class="buttonConfirmation">
+        <input type="button" value="Yes" v-on:click="LaunchGame()" />
+        <input type="button" value="No" v-on:click="CloseConfirmation()"/>
+      </div>
+    </div>
+
     <h1>{{ msg }}</h1>
     <div v-if="installedGames.length == 0 && searchingFiles">
       <p>Searching for games.</p>
@@ -21,7 +31,11 @@
                   placeholder="Search"
                   v-model="searchBarValue"
                 />
-                <input type="button" value="Random Game" v-on:click="LaunchRandomGame()">
+                <input
+                  type="button"
+                  value="Random Game"
+                  v-on:click="LaunchRandomGame()"
+                />
                 <div>
                   <label for="SortOptions">Sort Filters:</label>
                   <select
@@ -44,7 +58,7 @@
                 game[0].toLowerCase().includes(searchBarValue.toLowerCase()) ||
                 searchBarValue == ''
               "
-              v-on:dblclick="LaunchGame($event)"
+              v-on:dblclick="ConfirmGame($event)"
             >
               <td>
                 {{ game[0].replace(".exe", "") }}
@@ -60,7 +74,13 @@
             <div class="accordion">
               <div class="accordionOption">
                 <label for="launchOptions">Launch Options: </label>
-                <input type="text" name="launchOptions" id="launchOptions" placeholder="temp disabled" disabled />
+                <input
+                  type="text"
+                  name="launchOptions"
+                  id="launchOptions"
+                  placeholder="temp disabled"
+                  disabled
+                />
               </div>
             </div>
           </div>
@@ -72,7 +92,7 @@
 
 <script>
 export default {
-  name: "HelloWorld",
+  name: "GameList",
   props: {
     msg: String,
   },
@@ -145,18 +165,27 @@ export default {
     });
   },
   methods: {
-    LaunchGame: function (event) {
+    ConfirmGame: function(event) {
+      document.getElementById("confirm-game-name").innerText = event.currentTarget.children[0].innerText;
+      document.getElementById('confirm-game-path').innerText = event.currentTarget.children[1].innerText;
+      document.getElementById("confirmation").style.display = 'flex';
+    },
+    CloseConfirmation: function() {
+      document.getElementById('confirmation').style.display = 'none';
+    },
+    LaunchGame: function () {
       window.ipcRenderer.send(
         "launch-game",
-        event.currentTarget.children[1].innerText
+        document.getElementById('confirm-game-path').innerText
       );
+      document.getElementById('confirmation').style.display = "none";
     },
-    LaunchRandomGame: function() {
-      let tds = document.getElementsByTagName('tr');
+    LaunchRandomGame: function () {
+      let tds = document.getElementsByTagName("tr");
       console.log(tds);
-      let randomGame = tds[Math.floor(Math.random() * tds.length-1) + 1]
+      let randomGame = tds[Math.floor(Math.random() * tds.length - 1) + 1];
       console.log(randomGame);
-      randomGame.dispatchEvent(new MouseEvent('dblclick'));
+      randomGame.dispatchEvent(new MouseEvent("dblclick"));
     },
     OpenAccordion: function (event) {
       let parent = event.currentTarget.closest("tr");
@@ -268,6 +297,7 @@ tbody tr td:hover {
 }
 .hello {
   flex-grow: 1;
+  position: relative;
   display: table;
   overflow: auto;
 }
@@ -299,5 +329,25 @@ tbody tr td:hover {
   display: flex;
   justify-content: space-around;
   align-items: center;
+}
+#confirmation {
+  position: absolute;
+  display: none;
+  justify-content: top;
+  flex-direction: column;
+  align-items: center;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 60vh;
+  height: 30vh;
+  background-color: #222;
+  border: 2px solid darkgray;
+  z-index: 999;
+}
+.buttonConfirmation {
+  display: flex;
+  justify-content: space-around;
+  width: 200px;
 }
 </style>

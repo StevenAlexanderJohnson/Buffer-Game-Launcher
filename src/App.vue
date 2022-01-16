@@ -3,14 +3,14 @@
   <Tilebar />
     <div class="flexContainer">
       <Sidebar />
-      <HelloWorld v-if="page == 'home'" msg="Welcome to Buffer" />
+      <GameList v-if="page == 'home'" msg="Welcome to Buffer" />
       <Options v-else-if="page == 'options'" />
     </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import GameList from "./components/GameList.vue";
 import Sidebar from "./components/Sidebar.vue";
 import Tilebar from './components/Tilebar.vue';
 import Options from './components/Options.vue';
@@ -37,7 +37,7 @@ export default {
     }
   },
   components: {
-    HelloWorld,
+    GameList,
     Sidebar,
     Tilebar,
     Options
