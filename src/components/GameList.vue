@@ -1,12 +1,13 @@
 <template>
   <div class="hello">
     <div id="confirmation">
-      <p>Do you want to launch: </p>
+      <p>Do you want to launch:</p>
       <p id="confirm-game-name"></p>
       <div id="confirm-game-path" hidden></div>
       <div class="buttonConfirmation">
         <input type="button" value="Yes" v-on:click="LaunchGame()" />
-        <input type="button" value="No" v-on:click="CloseConfirmation()"/>
+        <input type="button" value="Reroll" id="reroll-button" v-on:click="SelectRandomGame()" />
+        <input type="button" value="No" v-on:click="CloseConfirmation()" />
       </div>
     </div>
 
@@ -34,7 +35,7 @@
                 <input
                   type="button"
                   value="Random Game"
-                  v-on:click="LaunchRandomGame()"
+                  v-on:click="SelectRandomGame()"
                 />
                 <div>
                   <label for="SortOptions">Sort Filters:</label>
@@ -136,16 +137,12 @@ export default {
       set(value) {
         this.sortOption = value;
         if (value === "name asc") {
-          console.log(
-            this.installedGames.sort((a, b) =>
-              a[0] > b[0] ? 1 : b[0] > a[0] ? -1 : 0
-            )
+          this.installedGames.sort((a, b) =>
+            a[0] > b[0] ? 1 : b[0] > a[0] ? -1 : 0
           );
         } else if (value === "name dsc") {
-          console.log(
-            this.installedGames.sort((a, b) =>
-              a[0] < b[0] ? 1 : b[0] < a[0] ? -1 : 0
-            )
+          this.installedGames.sort((a, b) =>
+            a[0] < b[0] ? 1 : b[0] < a[0] ? -1 : 0
           );
         }
       },
@@ -165,26 +162,29 @@ export default {
     });
   },
   methods: {
-    ConfirmGame: function(event) {
-      document.getElementById("confirm-game-name").innerText = event.currentTarget.children[0].innerText;
-      document.getElementById('confirm-game-path').innerText = event.currentTarget.children[1].innerText;
-      document.getElementById("confirmation").style.display = 'flex';
+    ConfirmGame: function (event) {
+      document.getElementById("confirm-game-name").innerText =
+        event.currentTarget.children[0].innerText;
+      document.getElementById("confirm-game-path").innerText =
+        event.currentTarget.children[1].innerText;
+      document.getElementById("confirmation").style.display = "flex";
     },
-    CloseConfirmation: function() {
-      document.getElementById('confirmation').style.display = 'none';
+    CloseConfirmation: function () {
+      document.getElementById("confirmation").style.display = "none";
+      document.getElementById("reroll-button").style.display = "none";
     },
     LaunchGame: function () {
       window.ipcRenderer.send(
         "launch-game",
-        document.getElementById('confirm-game-path').innerText
+        document.getElementById("confirm-game-path").innerText
       );
-      document.getElementById('confirmation').style.display = "none";
+      document.getElementById("confirmation").style.display = "none";
+      document.getElementById("reroll-button").style.display = "none";
     },
-    LaunchRandomGame: function () {
+    SelectRandomGame: function () {
       let tds = document.getElementsByTagName("tr");
-      console.log(tds);
       let randomGame = tds[Math.floor(Math.random() * tds.length - 1) + 1];
-      console.log(randomGame);
+      document.getElementById("reroll-button").style.display = "initial";
       randomGame.dispatchEvent(new MouseEvent("dblclick"));
     },
     OpenAccordion: function (event) {
@@ -202,7 +202,6 @@ export default {
         }
         parent.nextSibling.classList.add("opened");
       }
-      console.log(event.currentTarget.classList);
       if (event.currentTarget.classList.contains("flipped")) {
         event.currentTarget.classList.remove("flipped");
         return;
@@ -349,5 +348,9 @@ tbody tr td:hover {
   display: flex;
   justify-content: space-around;
   width: 200px;
+}
+
+#reroll-button {
+  display: none;
 }
 </style>
