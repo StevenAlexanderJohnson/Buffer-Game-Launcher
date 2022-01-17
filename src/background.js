@@ -3,10 +3,10 @@ import fs from 'fs';
 import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
-import path from 'path';
 const isDevelopment = process.env.NODE_ENV !== 'production'
 import { createStore } from 'vuex';
 import { FindGames, TestLaunchGame } from './FindGames';
+import path from 'path';
 
 const store = createStore({
   state() {
@@ -104,10 +104,10 @@ async function createWindow() {
       // contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
       nodeIntegration: false,
       contextIsolation: false,
-      preload: path.join(__dirname, "preload.js"),
       enableRemoteModule: true
     }
   });
+  console.log(path.join(process.cwd()));
   console.log("FULLSCREEN: " + settings['fullscreen']);
 
   win.on('ready-to-show', function () {
