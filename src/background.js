@@ -102,12 +102,12 @@ async function createWindow() {
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       // nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+      preload: path.join(process.cwd(), 'src', 'preload.js'),
       nodeIntegration: false,
       contextIsolation: false,
       enableRemoteModule: true
     }
   });
-  console.log(path.join(process.cwd()));
   console.log("FULLSCREEN: " + settings['fullscreen']);
 
   win.on('ready-to-show', function () {
